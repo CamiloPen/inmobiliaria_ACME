@@ -153,9 +153,14 @@ ALTER TABLE contract_temp MODIFY COLUMN Landlord VARCHAR(10);
 ALTER TABLE contract_temp MODIFY COLUMN Real_Estate_Agent VARCHAR(10);
 ALTER TABLE contract_temp MODIFY COLUMN Property VARCHAR(10);
 
-INSERT INTO contract (Tenant, Landlord, Contract_Date, Value, Duration, Real_Estate_Agent, Property, Late_payment) VALUES 
-(1, 4, '2024-01-15', 1500000.00, '12 meses', 1, 1, 'pending'), -- Laura
-(2, 5, '2024-02-10', 1200000.00, '6 meses', 2, 2, 'pending'), -- Juan
-(3, 5, '2024-03-05', 1800000.00, '12 meses', 2, 3, 'pending'), -- Marta
-(6, 4, '2024-01-10', 1100000.00, '6 meses', 1, 4, 'paid'),     -- Andrés
-(7, 5, '2024-03-01', 1700000.00, '12 meses', 2, 5, 'paid');    -- Sofía
+INSERT INTO contract_temp (Tenant, Landlord, Contract_Date, Value, Duration, Real_Estate_Agent, Property, Late_payment) VALUES 
+('20001', '30001', '2024-01-15', 1500000.00, '12 meses', '10001', 'PR001', 'pending'), -- Laura
+('20002', '30002', '2024-02-10', 1200000.00, '6 meses', '10002', 'PR002', 'pending'), -- Juan
+('20003', '30002', '2024-03-05', 1800000.00, '12 meses', '10002', 'PR003', 'pending'), -- Marta
+('20006', '30001', '2024-01-10', 1100000.00, '6 meses', '10001', 'PR004', 'paid'),     -- Andrés
+('20007', '30002', '2024-03-01', 1700000.00, '12 meses', '10002', 'PR005', 'paid');    -- Sofía
+
+INSERT INTO owner (client_id, property_id)
+(SELECT (SELECT C.id FROM client C INNER JOIN person P ON C.person_id = P.id WHERE P.id_number = O.client), (SELECT id FROM property WHERE property_registration = O.property) FROM owner_temp O);
+
+DROP TABLE owner_temp;
