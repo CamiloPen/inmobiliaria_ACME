@@ -1,14 +1,14 @@
-CREATE DATABASE real_estate;
+create DATABASE if not exists real_estate;
 
-USE real_estate;
+use real_estate;
 
-CREATE TABLE department (
+create table if not exists department (
     id INT PRIMARY KEY AUTO_INCREMENT,
     code VARCHAR(10) NOT NULL,
     name VARCHAR(60) NOT NULL
 );
 
-CREATE TABLE city (
+create table if not exists city (
     id INT PRIMARY KEY AUTO_INCREMENT,
     code VARCHAR(10) NOT NULL,
     name VARCHAR(60) NOT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE city (
     FOREIGN KEY (department_id) REFERENCES department(id)
 );
 
-CREATE TABLE neighborhood (
+create table if not exists neighborhood (
     id INT PRIMARY KEY AUTO_INCREMENT,
     code VARCHAR(10) NOT NULL,
     name VARCHAR(60) NOT NULL,
@@ -63,6 +63,7 @@ CREATE TABLE client (
 CREATE TABLE property (
     id INT PRIMARY KEY AUTO_INCREMENT,
     property_type ENUM('vertical', 'horizontal') NOT NULL,
+    property_use ENUM('comercial','residencial', 'mixto') NOT NULL,
     address VARCHAR(50) NOT NULL,
     price INT NOT NULL,
     property_registration VARCHAR(20) NOT NULL,
