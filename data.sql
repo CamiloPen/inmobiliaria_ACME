@@ -1,11 +1,12 @@
--- 1. Departamentos
+--------------------------------------------- 1. Departamentos ----------------------------------------------------------
 
 INSERT INTO department (code, name) VALUES 
 ('D01', 'Antioquia'),
 ('D02', 'Cundinamarca'),
 ('D03', 'Valle del Cauca');
 
--- 2. Ciudades
+
+--------------------------------------------- 2. Ciudades ---------------------------------------------------------------
 
 CREATE TABLE city_temp AS
 SELECT code, name, NULL AS department FROM city WHERE false;
@@ -22,7 +23,7 @@ INSERT INTO city (code, name, department_id)
 
 DROP TABLE city_temp;
 
--- 3. Barrios
+--------------------------------------------- 3. Barrios -----------------------------------------------------------------
 
 CREATE TABLE neighborhood_temp AS
 SELECT code, name, description, NULL AS city FROM neighborhood WHERE false;
@@ -40,7 +41,8 @@ INSERT INTO neighborhood (code, name, description, city_id)
 
 DROP TABLE neighborhood_temp;
 
--- 4. Agentes inmobiliarios
+--------------------------------------------- 4. Agentes inmobiliarios -----------------------------------------------------
+-- 
 
 CREATE TABLE user_temp AS
 SELECT name_or_company_name, surname_or_company, id_type, NULL AS neighborhood, id_number, address, email, phone, user_type FROM user WHERE false;
@@ -56,7 +58,7 @@ INSERT INTO user (name_or_company_name, surname_or_company, id_type, neighborhoo
 
 DROP TABLE user_temp;
 
--- 5. Personas (7)
+--------------------------------------------- 5. Personas ----------------------------------------------------------------------
 
 CREATE TABLE person_temp AS
 SELECT first_name_business_name, last_name_company_name, id_type, person_type, address, email, phone, NULL AS neighborhood, id_number FROM person WHERE false;
@@ -80,7 +82,7 @@ INSERT INTO person (first_name_business_name, last_name_company_name, id_type, p
 
 DROP TABLE person_temp;
 
--- 6. Clientes (5)
+--------------------------------------------- 6. Clientes ----------------------------------------------------------------------
 
 CREATE TABLE client_temp AS
 SELECT legal_representative_id, NULL AS person FROM client WHERE false;
@@ -104,7 +106,7 @@ INSERT INTO client (legal_representative_id, person_id)
 
 DROP TABLE client_temp;
 
--- 7. Propiedades (5)
+--------------------------------------------- 7. Propiedades -------------------------------------------------------------------------
 
 CREATE TABLE property_temp AS
 SELECT property_type, property_use, address, price, property_registration, additional_information, construction_year, private_area, built_area, Null AS neighborhood FROM property WHERE false;
@@ -123,7 +125,7 @@ INSERT INTO property (property_type, property_use, address, price, property_regi
 
 DROP TABLE property_temp;
 
--- 8. Propietarios (5 propiedades)
+--------------------------------------------- 8. Propietarios -------------------------------------------------------------------------
 
 CREATE TABLE owner_temp AS
 SELECT NULL AS client, NULL AS property FROM owner WHERE false;
@@ -143,7 +145,7 @@ INSERT INTO owner (client_id, property_id)
 
 DROP TABLE owner_temp;
 
--- 9. Contratos (3 en mora, 2 pagados)
+--------------------------------------------- 9. Contratos ---------------------------------------------------------------------------
 
 CREATE TABLE contract_temp AS
 SELECT NULL AS Tenant, NULL AS Landlord, Contract_Date, Value, Duration, NULL AS Real_Estate_Agent, NULL AS Property, Late_payment FROM contract WHERE false;
@@ -160,7 +162,10 @@ INSERT INTO contract_temp (Tenant, Landlord, Contract_Date, Value, Duration, Rea
 ('20006', '30001', '2024-01-10', 1100000.00, '6 meses', '10001', 'PR004', 'paid'),     -- Andrés
 ('20007', '30002', '2024-03-01', 1700000.00, '12 meses', '10002', 'PR005', 'paid');    -- Sofía
 
-INSERT INTO owner (client_id, property_id)
-(SELECT (SELECT C.id FROM client C INNER JOIN person P ON C.person_id = P.id WHERE P.id_number = O.client), (SELECT id FROM property WHERE property_registration = O.property) FROM owner_temp O);
+INSERT INTO contract (Tenant_id, Landlord_id, Contract_Date, Value, Duration, Real_Estate_Agent_id, Property_id, Late_payment)
+(SELECT (SELECT Ci.id FROM client Ci INNER JOIN person P ON Ci.person_id = P.id WHERE P.id_number = Co.Tenant),
+(SELECT Ci.id FROM client Ci INNER JOIN person P ON Ci.person_id = P.id WHERE P.id_number = Co.Landlord), Contract_Date, Value, Duration, 
+(SELECT id FROM user WHERE id_number = Co.Real_Estate_Agent), 
+(SELECT id FROM property WHERE property_registration = Co.property), Late_payment FROM contract_temp Co);
 
-DROP TABLE owner_temp;
+DROP TABLE contract_temp;
